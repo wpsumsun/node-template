@@ -24,6 +24,9 @@ RUN addgroup -g 1001 -S nodejs && \
 # 从 builder 复制文件
 COPY --from=builder --chown=nodejs:nodejs /app /app
 
+# 创建 logs 目录并设置权限
+RUN mkdir -p /app/logs && chown -R nodejs:nodejs /app/logs
+
 # 切换到非 root 用户
 USER nodejs
 
