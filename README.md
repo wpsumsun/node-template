@@ -177,29 +177,107 @@ pm2 monit
 - **dotenv** - 环境变量
 - **PM2** - 进程管理
 
-## 🚀 部署到服务器
+## 🚀 部署方案
 
-1. 克隆代码到服务器
+### 方案 1：Docker 部署（⭐推荐）
+
+**优势：** 环境一致、一键部署、自动重启
+
 ```bash
-git clone <your-repo-url>
+# 1. 构建并启动
+docker-compose up -d --build
+
+# 2. 查看状态
+docker-compose ps
+
+# 3. 查看日志
+docker-compose logs -f app
+
+# 4. 更新部署
+./deploy-docker.sh
+```
+
+详细文档：[Docker 部署方案](Docker部署方案.md)
+
+### 方案 2：传统 PM2 部署
+
+```bash
+# 1. 克隆代码到服务器
+git clone git@github.com:wpsumsun/node-template.git
 cd nodejs-template
-```
 
-2. 安装依赖
-```bash
+# 2. 安装依赖
 npm install --production
-```
 
-3. 配置环境变量
-```bash
+# 3. 配置环境变量
 cp .env.example .env
 nano .env  # 编辑配置
-```
 
-4. 启动服务
-```bash
+# 4. 启动服务
 pm2 start ecosystem.config.js --env production
 pm2 save
+```
+
+详细文档：[部署流程](部署流程.md)
+
+### 方案 3：自动化部署（GitHub Actions）
+
+每次推送到 main 分支自动部署：
+
+1. 配置 GitHub Secrets（`SERVER_IP`, `SERVER_USER`, `SSH_PRIVATE_KEY`）
+2. 推送代码：`git push origin main`
+3. 自动触发部署
+
+配置文件：[.github/workflows/deploy.yml](.github/workflows/deploy.yml)
+
+## 📂 项目文件说明
+
+### Docker 相关
+- `Dockerfile` - Docker 镜像构建文件
+- `docker-compose.yml` - Docker Compose 配置
+- `.dockerignore` - Docker 构建忽略文件
+- `nginx.conf` - Nginx 反向代理配置
+- `deploy-docker.sh` - Docker 部署脚本
+
+### 部署相关
+- `ecosystem.config.js` - PM2 进程管理配置
+- `.github/workflows/deploy.yml` - GitHub Actions 自动部署
+- `部署流程.md` - 传统部署详细流程
+- `Docker部署方案.md` - Docker 部署详细方案
+
+## 🔧 配置文件
+
+### 环境变量（.env）
+```bash
+NODE_ENV=production
+PORT=3000
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=mydb
+JWT_SECRET=your-secret-key
+```
+
+### PM2 配置（ecosystem.config.js）
+支持集群模式、自动重启、日志管理等功能。
+
+### Docker 配置（docker-compose.yml）
+包含健康检查、自动重启、日志轮转等功能。
+
+## 📊 监控和日志
+
+### PM2 监控
+```bash
+pm2 list           # 查看所有进程
+pm2 logs           # 查看日志
+pm2 monit          # 实时监控
+pm2 show <name>    # 查看详细信息
+```
+
+### Docker 监控
+```bash
+docker-compose ps              # 查看容器状态
+docker-compose logs -f app     # 查看实时日志
+docker stats                   # 查看资源使用
 ```
 
 ## 📄 License
